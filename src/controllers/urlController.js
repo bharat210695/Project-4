@@ -30,18 +30,19 @@ const createUrl = async function(req, res) {
         }
 
         let urlCode = shortid.generate()
-        let urlAlreadyUsed = await UrlModel.findOne({ urlCode })
+        let urlAlreadyUsed = await UrlModel.findOne({ longUrl })
         if (urlAlreadyUsed) {
-            return res.status(400).send({ status: false, message: "url already used" })
+            //return res.status(400).send({ status: false, message: "url already used" })
+            res.json(urlAlreadyUsed)
+        } else {
+
+            let baseUrl = 'http://localhost:3000'
+            let shortUrl = baseUrl + '/' + urlCode
+
+            let urlCreated = { urlCode: urlCode, longUrl, shortUrl: shortUrl }
+            let newUrl = await UrlModel.create(urlCreated)
+            return res.status(201).send({ status: true, message: "url created successfully", data: newUrl })
         }
-
-        let baseUrl = 'http://localhost:3000'
-        let shortUrl = baseUrl + '/' + urlCode
-
-        let urlCreated = { urlCode: urlCode, longUrl, shortUrl: shortUrl }
-        let newUrl = await UrlModel.create(urlCreated)
-        return res.status(201).send({ status: true, message: "url created successfully", data: newUrl })
-
     } catch (error) {
         console.log(error)
         res.status(500).send({ status: false, error: error.message })
