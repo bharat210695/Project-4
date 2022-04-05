@@ -1,4 +1,3 @@
-const { is } = require('express/lib/request');
 const UrlModel = require('../models/urlModel')
 const validUrl = require('valid-url')
 const shortid = require('shortid')
@@ -23,7 +22,7 @@ const createUrl = async function(req, res) {
             return res.status(400).send({ status: false, message: "longUrl is required in body" })
         }
 
-        if (!(/(http(s)?):\/\/(www\.)?[a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/.test(longUrl))) {
+        if (!(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g.test(longUrl))) {
             return res.status(400).send({ status: false, message: "longUrl is not a valid URL" })
         }
 
@@ -49,6 +48,16 @@ const createUrl = async function(req, res) {
 // get url code
 const getUrlCode = async function(req, res) {
     try {
+        let urlCode = req.params.urlCode
+
+        if (!isValid(urlCode)) {
+            return res.status(400).send({ status: false, message: "urlCode is required" })
+        }
+        let url = await UrlModel.findOne({ urlCode: urlCode })
+        if (!url) {
+            return res.status(404).send({ status: false, message: "urlCode not exist" })
+        }
+        return res.status(200).redirect({ status: true, data: url.length })
 
 
     } catch (error) {
