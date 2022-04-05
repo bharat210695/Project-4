@@ -21,6 +21,9 @@ const createUrl = async function(req, res) {
         if (!isValid(longUrl)) {
             return res.status(400).send({ status: false, message: "longUrl is required in body" })
         }
+        if (!validUrl.isUri(longUrl)) {
+            return res.status(400).send({ status: false, msg: "longUrl is not a valid url" })
+        }
 
         if (!(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g.test(longUrl))) {
             return res.status(400).send({ status: false, message: "longUrl is not a valid URL" })
@@ -57,7 +60,7 @@ const getUrlCode = async function(req, res) {
         if (!url) {
             return res.status(404).send({ status: false, message: "urlCode not exist" })
         }
-        return res.status(200).redirect({ status: true, data: url.length })
+        return res.status(200).redirect(url.longUrl)
 
 
     } catch (error) {
