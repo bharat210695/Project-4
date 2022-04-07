@@ -92,3 +92,6 @@ If you haven’t used tinyurl.com before, please try creating a new shortened UR
 
 ```
 
+//Link : redis-16368.c15.us-east-1-2.ec2.cloud.redislabs.com
+//Port Number : 16368
+//Password : Y52LH5DG1XbiVCkNC2G65MvOFswvQCRQ

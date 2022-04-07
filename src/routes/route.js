@@ -11,6 +11,7 @@ router.get('/test', function(req, res) {
 // 1. create short url
 router.post('/url/shorten', UrlController.createUrl)
 
+
 // 2. get url code
 router.get('/:urlCode', UrlController.getUrlCode)
 
