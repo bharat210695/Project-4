@@ -4,6 +4,7 @@ const shortid = require('shortid')
 const redis = require("redis");
 const { promisify } = require("util");
 
+// validate request body
 const isValid = function(value) {
     if (typeof value === 'undefined' || value === null) return false
     if (typeof value === 'string' && value.trim().length === 0) return false
@@ -32,7 +33,7 @@ const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 const createUrl = async function(req, res) {
     try {
         let data = req.body
-        let { longUrl } = data
+        let { longUrl } = data // destructuring
 
         if (Object.keys(data).length = 0) {
             return res.status(400).send({ status: false, message: "request body is empty, BAD request" })
@@ -47,6 +48,13 @@ const createUrl = async function(req, res) {
         if (!(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g.test(longUrl))) {
             return res.status(400).send({ status: false, message: "longUrl is not a valid URL" })
         }
+
+        const cahceUrlData = await GET_ASYNC(`${longUrl}`)
+
+        if (cahceUrlData) {
+            return res.status(200).send({ status: "true", data: cahceUrlData })
+        }
+
 
         let urlCode = shortid.generate()
         let urlAlreadyUsed = await UrlModel.findOne({ longUrl })
@@ -86,7 +94,7 @@ const getUrlCode = async function(req, res) {
             if (!url) {
                 return res.status(404).send({ status: false, message: "urlCode not exist" })
             }
-            await SET_ASYNC(`${urlCode}`, JSON.stringify(url.longUrl)), "EX", 100
+            await SET_ASYNC(`${urlCode}`, JSON.stringify(url.longUrl))
             return res.status(302).redirect(url.longUrl)
         }
 
