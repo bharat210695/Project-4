@@ -12,12 +12,12 @@ const isValid = function(value) {
 }
 
 
-// redis connection
+// redis connection====================================================================//
 const redisClient = redis.createClient(
     17945,
-    "redis-17945.c56.east-us.azure.cloud.redislabs.com", { no_ready_check: true }
+    "redis-17945.c56.east-us.azure.cloud.redislabs.com", { no_ready_check: true } // redis endpoint
 );
-redisClient.auth("LwwsL9T8kY8LMA2XARPJgoZIBEUbJg5M", function(err) {
+redisClient.auth("LwwsL9T8kY8LMA2XARPJgoZIBEUbJg5M", function(err) { // redis password
     if (err) throw err;
 });
 redisClient.on("connect", async function() {
